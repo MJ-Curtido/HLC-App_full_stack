@@ -38,4 +38,28 @@ router.get('/compras/yo', auth, async (req, res) => {
     }
 });
 
+router.get('/compras/nocomprado', auth, async (req, res) => {
+    try {
+        const compras = await Compra.find({ usuario: req.usuario._id });
+        let listaIds = [];
+
+        compras.forEach(compra => {
+            listaIds.push(compra.curso);
+        });
+
+        const cursos = await Curso.find({ _id: { $nin: listaIds }, creador: { $ne: req.usuario._id } });
+
+        let listaCursos = [];
+        for (let i = 0; i < cursos.length; i++) {
+            const curso = await Curso.findOne({ _id: cursos[i] }).populate('creador');
+
+            listaCursos.push(curso);
+        };
+
+        res.send(listaCursos);
+    } catch(e) {
+        res.status(500).send();
+    }
+});
+
 module.exports = router;
