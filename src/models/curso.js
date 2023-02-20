@@ -42,7 +42,7 @@ cursoSchema.methods.toJSON = function() {
   return objectCurso;
 };
 
-cursoSchema.pre("remove", async (next) => {
+cursoSchema.pre("remove", async function (next) {
   const course = this;
   await Compra.deleteMany({ curso: curso._id });
   next();

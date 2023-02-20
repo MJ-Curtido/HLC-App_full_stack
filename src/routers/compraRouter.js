@@ -1,10 +1,16 @@
 const express = require("express");
 const Compra = require("../models/compra");
+const Curso = require("../models/curso");
 const auth = require("../middleware/auth");
 const router = new express.Router();
 
-router.post("/compras", async (req, res) => {
-    const compra = new Compra(req.body);
+router.post("/compras/comprar", auth, async (req, res) => {
+    const curso = await Curso.findOne({ _id: req.body.curso });
+
+    const compra = new Compra({
+        curso: curso._id,
+        usuario: req.usuario._id
+    });
 
     try {
         await compra.save();
