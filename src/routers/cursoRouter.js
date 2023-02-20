@@ -1,6 +1,7 @@
 const express = require("express");
 const Curso = require("../models/curso");
 const Usuario = require("../models/usuario");
+const auth = require("../middleware/auth");
 const router = new express.Router();
 
 router.post("/cursos/crear", auth, async (req, res) => {
@@ -45,23 +46,13 @@ router.get("/cursos/:id", async (req, res) => {
 router.get('/cursos/miscursos', auth, async (req, res) => {
   try {
 
-      const cursos = await Curso.find({ creador: req.usuario._id });
-      
-      let listaCursos = [];
-      for(let i = 0; i < cursos.length; i++){
-        const usuario = await Usuario.findById(cursos[i].creador);
-        const objectCurso = cursos[i].toObject();
-        delete objectCurso.creador;
-        objectCurso.creador = usuario.nombre;
+      const cursos = await Curso.find({ creador: req.usuario._id }).populate('creador');
 
-        listaCursos.push(objectCurso);
-      }
-
-      if(listaCursos.length == 0) {
+      if(cursos.length == 0) {
         return res.status(404).send({ error: 'No has creado ningún curso.' });
       }
 
-      res.send(listaCursos);
+      res.send(cursos);
   } catch (e) {
       res.status(500).send(e);
   }

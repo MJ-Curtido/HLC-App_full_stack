@@ -1,8 +1,8 @@
 const express = require("express");
 require("./db/mongoose");
-const usuarioRouter = require("./routers/usuario");
-const cursoRouter = require("./routers/curso");
-const compraRouter = require("./routers/compra");
+const usuarioRouter = require("./routers/usuarioRouter");
+const cursoRouter = require("./routers/cursoRouter");
+const compraRouter = require("./routers/compraRouter");
 
 const app = express();
 const port = 3000;

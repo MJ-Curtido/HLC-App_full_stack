@@ -1,9 +1,7 @@
 const mongoose = require("mongoose");
 const Compra = require("./compra");
 
-const CursoSchema = mongoose.Schema(
-  "Curso",
-  {
+const cursoSchema = mongoose.Schema({
     nombre: {
       type: String,
       required: true,
@@ -33,7 +31,7 @@ const CursoSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-CursoSchema.methods.toJSON = () => {
+cursoSchema.methods.toJSON = function() {
   const curso = this;
   const objectCurso = curso.toObject();
   const creador = objectCurso.creador;
@@ -44,11 +42,11 @@ CursoSchema.methods.toJSON = () => {
   return objectCurso;
 };
 
-CursoSchema.pre("remove", async (next) => {
+cursoSchema.pre("remove", async (next) => {
   const course = this;
   await Compra.deleteMany({ curso: curso._id });
   next();
 });
 
-const Curso = mongoose.model("Curso", CursoSchema);
+const Curso = mongoose.model("Curso", cursoSchema);
 module.exports = Curso;

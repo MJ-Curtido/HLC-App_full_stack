@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
-const UsuarioSchema = mongoose.Schema("Usuario", {
+const usuarioSchema = mongoose.Schema({
   nombre: {
     type: String,
     required: true,
@@ -55,7 +55,7 @@ const UsuarioSchema = mongoose.Schema("Usuario", {
   ],
 });
 
-UsuarioSchema.methods.toJSON = () => {
+usuarioSchema.methods.toJSON = () => {
   const usuario = this;
   const objectUsuario = usuario.toObject();
 
@@ -65,7 +65,7 @@ UsuarioSchema.methods.toJSON = () => {
   return objectUsuario;
 };
 
-UsuarioSchema.methods.generateAuthToken = async () => {
+usuarioSchema.methods.generateAuthToken = async () => {
   const usuario = this;
   const token = jwt.sign({ _id: usuario._id.toString() }, "nuevocurso");
 
@@ -75,7 +75,7 @@ UsuarioSchema.methods.generateAuthToken = async () => {
   return token;
 };
 
-UsuarioSchema.statics.findByCredentials = async (email, contrasenya) => {
+usuarioSchema.statics.findByCredentials = async (email, contrasenya) => {
   const usuario = await User.findOne({ email });
 
   if (!usuario) {
@@ -91,7 +91,7 @@ UsuarioSchema.statics.findByCredentials = async (email, contrasenya) => {
   return usuario;
 };
 
-UsuarioSchema.pre("save", async (next) => {
+usuarioSchema.pre("save", async (next) => {
   const usuario = this;
   if (usuario.isModified("contrasenya")) {
     usuario.contrasenya = await bcrypt.hash(usuario.contrasenya, 8);
@@ -99,5 +99,5 @@ UsuarioSchema.pre("save", async (next) => {
   next();
 });
 
-const Usuario = mongoose.model("Usuario", UsuarioSchema);
+const Usuario = mongoose.model("Usuario", usuarioSchema);
 module.exports = Usuario;

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const Compra = new mongoose.Model({
+const compra = mongoose.model('Compra', {
   fecha: {
     type: Date,
     default: new Date(),
@@ -15,4 +15,4 @@ const Compra = new mongoose.Model({
   },
 });
 
-module.exports = Compra;
+module.exports = compra;
