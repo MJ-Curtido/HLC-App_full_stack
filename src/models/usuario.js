@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const usuarioSchema = mongoose.Schema({
   nombre: {
@@ -19,21 +20,11 @@ const usuarioSchema = mongoose.Schema({
       }
     },
   },
-  constrasenya: {
+  contrasenya: {
     type: String,
     required: true,
     trim: true,
     minlength: 7,
-  },
-  fechaNacimiento: {
-    type: Date,
-    required: true,
-    trim: true,
-    validate(value) {
-      if (value >= Date.now()) {
-        throw new Error("Fecha de nacimiento inválida");
-      }
-    },
   },
   telefono: {
     type: String,
@@ -55,7 +46,7 @@ const usuarioSchema = mongoose.Schema({
   ],
 });
 
-usuarioSchema.methods.toJSON = () => {
+usuarioSchema.methods.toJSON = function() {
   const usuario = this;
   const objectUsuario = usuario.toObject();
 
@@ -65,12 +56,15 @@ usuarioSchema.methods.toJSON = () => {
   return objectUsuario;
 };
 
-usuarioSchema.methods.generateAuthToken = async () => {
+usuarioSchema.methods.generateAuthToken = async function() {
   const usuario = this;
   const token = jwt.sign({ _id: usuario._id.toString() }, "nuevocurso");
+  console.log('333')
 
   usuario.tokens = usuario.tokens.concat({ token });
+  console.log('444')
   await usuario.save();
+  console.log('555')
 
   return token;
 };
@@ -91,7 +85,7 @@ usuarioSchema.statics.findByCredentials = async (email, contrasenya) => {
   return usuario;
 };
 
-usuarioSchema.pre("save", async (next) => {
+usuarioSchema.pre("save", async function(next) {
   const usuario = this;
   if (usuario.isModified("contrasenya")) {
     usuario.contrasenya = await bcrypt.hash(usuario.contrasenya, 8);
