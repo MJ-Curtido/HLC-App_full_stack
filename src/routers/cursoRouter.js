@@ -5,13 +5,14 @@ const auth = require("../middleware/auth");
 const router = new express.Router();
 
 router.post("/cursos/crear", auth, async (req, res) => {
-  const curso = new Curso({
+  let curso = new Curso({
     ...req.body,
     creador: req.usuario._id,
   });
 
   try {
     await curso.save();
+    curso = await Curso.findById(curso._id).populate('creador');
     res.status(201).send(curso);
   } catch (e) {
     res.status(400).send(e);
