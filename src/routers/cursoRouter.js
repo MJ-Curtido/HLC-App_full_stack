@@ -1,5 +1,6 @@
 const express = require("express");
 const Curso = require("../models/curso");
+const Usuario = require("../models/usuario");
 const router = new express.Router();
 
 router.post("/cursos/crear", auth, async (req, res) => {
@@ -46,16 +47,21 @@ router.get('/cursos/miscursos', auth, async (req, res) => {
 
       const cursos = await Curso.find({ creador: req.usuario._id });
       
-      let temp_courses = [];
+      let listaCursos = [];
       for(let i = 0; i < cursos.length; i++){
-          const objectCurso = await toObjectCourse(cursos[i]);
+        const usuario = await Usuario.findById(cursos[i].creador);
+        const objectCurso = cursos[i].toObject();
+        delete objectCurso.creador;
+        objectCurso.creador = usuario.nombre;
 
-          temp_courses.push(objectCurso);
+        listaCursos.push(objectCurso);
       }
 
-      if(temp_courses.length == 0) return res.status(404).send({ error: 'You has not create any course yet!' });
+      if(listaCursos.length == 0) {
+        return res.status(404).send({ error: 'No has creado ningún curso.' });
+      }
 
-      res.send(temp_courses);
+      res.send(listaCursos);
   } catch (e) {
       res.status(500).send(e);
   }
