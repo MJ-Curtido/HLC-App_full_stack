@@ -59,18 +59,15 @@ usuarioSchema.methods.toJSON = function() {
 usuarioSchema.methods.generateAuthToken = async function() {
   const usuario = this;
   const token = jwt.sign({ _id: usuario._id.toString() }, "nuevocurso");
-  console.log('333')
 
   usuario.tokens = usuario.tokens.concat({ token });
-  console.log('444')
   await usuario.save();
-  console.log('555')
 
   return token;
 };
 
-usuarioSchema.statics.findByCredentials = async (email, contrasenya) => {
-  const usuario = await User.findOne({ email });
+usuarioSchema.statics.findByCredentials = async function (email, contrasenya) {
+  const usuario = await Usuario.findOne({ email });
 
   if (!usuario) {
     throw new Error("No se ha podido iniciar sesión.");

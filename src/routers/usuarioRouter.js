@@ -9,7 +9,6 @@ router.post("/usuarios/registro", async (req, res) => {
   try {
     await usuario.save();
     const token = await usuario.generateAuthToken();
-    console.log('aaaaaaaaaaaaaaaaaaa')
     res.status(201).send({ usuario, token });
   } catch (e) {
     res.status(400).send(e);
