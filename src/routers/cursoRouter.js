@@ -1,6 +1,5 @@
 const express = require("express");
 const Curso = require("../models/curso");
-const Usuario = require("../models/usuario");
 const auth = require("../middleware/auth");
 const router = new express.Router();
 
@@ -19,34 +18,8 @@ router.post("/cursos/crear", auth, async (req, res) => {
   }
 });
 
-// router.get('/cursos', auth, async (req, res) => {
-//   try {
-//       await req.user.populate('tasks').execPopulate();
-//       res.send(req.user.tasks);
-//   } catch (e) {
-//       res.status(500).send();
-//   }
-// });
-
-router.get("/cursos/:id", async (req, res) => {
-  const _id = req.params.id;
-
-  try {
-    const curso = await Curso.findById(_id);
-
-    if (!curso) {
-      return res.status(404).send();
-    }
-
-    res.send(curso);
-  } catch (e) {
-    res.status(500).send();
-  }
-});
-
 router.get('/cursos/miscursos', auth, async (req, res) => {
   try {
-
       const cursos = await Curso.find({ creador: req.usuario._id }).populate('creador');
 
       if(cursos.length == 0) {
