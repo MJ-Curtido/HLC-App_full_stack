@@ -26,9 +26,11 @@ router.get('/compras/yo', auth, async (req, res) => {
         const compras = await Compra.find({ usuario: req.usuario._id }).populate('curso');
 
         let listaCursos = [];
-        compras.forEach(compra => {
-            listaCursos.push(compra.curso);
-        });
+        for (let i = 0; i < compras.length; i++) {
+            const curso = await Curso.findOne({ _id: compras[i].curso }).populate('creador');
+
+            listaCursos.push(curso);
+        };
 
         res.send(listaCursos);
     } catch(e) {
