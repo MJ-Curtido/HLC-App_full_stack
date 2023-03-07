@@ -29,7 +29,7 @@ router.post("/usuarios/iniciarsesion", async (req, res) => {
   }
 });
 
-router.post("/usuarios/cerrarsesion", auth, async (req, res) => {
+router.get("/usuarios/cerrarsesion", auth, async (req, res) => {
   try {
     req.usuario.tokens = req.usuario.tokens.filter((token) => {
       return token.token !== req.token;
